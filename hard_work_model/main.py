@@ -174,7 +174,10 @@ def kill_work(ch, method, properties, body):
             return
 
         print("Job is not processing, we just set the status on DB")
-        change_job_status_to_cancelled_before_execution(job_id, conn_and_cursor)
+        
+        if  job_status not in ['KILLED','CANCELLED_BEFORE_EXECUTION','FINISHED']:
+            change_job_status_to_cancelled_before_execution(job_id, conn_and_cursor)
+        
         main.commit_transaction(conn_and_cursor)
         ch.basic_ack(delivery_tag = method.delivery_tag)
         print("killed worked")
